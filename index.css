@@ -1,0 +1,28 @@
+@font-face {
+    font-family: HasanAkibuki;
+    src: url(HasanAkibuki.ttf);
+}
+
+html, button, textarea {
+    font-family: HasanAkibuki, cursive;
+}
+
+body {
+    max-width: 1000px;
+    margin: auto;
+    padding: 0 1rem;
+}
+
+textarea {
+    width: 100%;
+    border: none;
+    outline: none;
+    font-size: 1rem;
+}
+
+button:disabled {
+    padding-left: 0;
+    border: none;
+    background-color: white;
+    color: black;
+}
