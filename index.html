@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Confessor</title>
+    <script>
+      const SpeechRecognition =
+        window.SpeechRecognition || window.webkitSpeechRecognition;
+
+      function getDateTime() {
+        const now = new Date();
+        const date = now.toLocaleDateString('bn-BD', {
+          dateStyle: 'full',
+        });
+
+        const timeParts = new Intl.DateTimeFormat('bn-BD', {
+          minute: 'numeric',
+          hour: 'numeric',
+          hour12: true,
+          dayPeriod: 'long',
+        }).formatToParts(now);
+
+        return `${timeParts[4].value} ${timeParts
+          .slice(0, 4)
+          .map(x => x.value)
+          .join('')
+          .trim()}, ${date}`;
+      }
+
+      function init() {
+        const confessionHistory = JSON.parse(localStorage.getItem('confessions') ?? '{}');
+        const historyContainer = document.querySelector('div');
+        Object.keys(confessionHistory).forEach(time => {
+          const p = document.createElement('p');
+          p.innerHTML = `<small>${time}</small> <br/> ${confessionHistory[time].replace(
+            /\n/g,
+            '<br/>'
+          )}`;
+          historyContainer.appendChild(p);
+        });
+
+        const currentTime = getDateTime();
+
+        const confessionBox = document.querySelector('textarea');
+        const hiButton = document.querySelector('button');
+
+        function save() {
+          if (!confessionHistory[currentTime]) confessionHistory[currentTime] = '';
+          confessionHistory[currentTime] += confessionBox.value;
+          localStorage.setItem('confessions', JSON.stringify(confessionHistory));
+        }
+
+        function handleResult(e) {
+          const result = e.results[e.results.length - 1];
+          console.log('potential matches: ', result.length);
+          confessionBox.value += result[0].transcript;
+
+          save();
+        }
+
+        function handleEnd(e) {
+          console.log('error: ', e.error);
+          hiButton.textContent = 'এই!';
+          hiButton.disabled = false;
+        }
+
+        function start() {
+          hiButton.textContent = 'শুনতেসি...';
+          hiButton.disabled = true;
+          recognition.start();
+        }
+
+        const recognition = new SpeechRecognition();
+        recognition.lang = 'bn-BD';
+        recognition.continuous = true;
+        recognition.onend = handleEnd;
+        recognition.onresult = handleResult;
+
+        hiButton.onclick = start;
+        confessionBox.oninput = save;
+        start();
+      }
+
+      window.onload = init;
+    </script>
+  </head>
+  <body>
+    <div></div>
+    <textarea rows="5" cols="50"></textarea>
+    <br />
+    <button></button>
+  </body>
+</html>
