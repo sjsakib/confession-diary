@@ -46,7 +46,7 @@ function init() {
     e.target.textContent = '<ডান!>';
     setTimeout(() => {
       e.target.textContent = '<কপি>';
-    }, 5000)
+    }, 3000)
   }
 
   function handleEnd(e) {
