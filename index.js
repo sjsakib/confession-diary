@@ -41,6 +41,14 @@ function init() {
     save();
   }
 
+  function handleCopy(e) {
+    navigator.clipboard.writeText(confessionBox.value);
+    e.target.textContent = '<ডান!>';
+    setTimeout(() => {
+      e.target.textContent = '<কপি>';
+    }, 5000)
+  }
+
   function handleEnd(e) {
     hiButton.textContent = 'এই!';
     hiButton.disabled = false;
@@ -60,7 +68,7 @@ function init() {
     confessionBox.focus();
     hiButton.textContent = 'শুনছি...';
     hiButton.disabled = true;
-  }
+  };
 
   hiButton.onclick = start;
   confessionBox.oninput = save;
@@ -79,6 +87,8 @@ function init() {
   });
 
   start();
+
+  document.querySelector('span[role="button"]').addEventListener('click', handleCopy);
 }
 
 window.onload = init;
